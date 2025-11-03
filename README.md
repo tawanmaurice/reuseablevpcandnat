@@ -1,53 +1,80 @@
-Reusable VPC + NAT + S3 Endpoint (Terraform)
+# 🌐 Reusable VPC + NAT + S3 Endpoint (Terraform)
 
-Spin up a clean, production-style VPC scaffold in us-east-1 with:
+A ready-to-clone, production-style **VPC baseline** for AWS — including public/private subnets, NAT gateway, and an S3 VPC endpoint.  
+Perfect for quickly spinning up new Terraform environments or reusing as a foundation for future projects.
 
-1 VPC (10.112.0.0/16)
+---
 
-2 public subnets (1a, 1b) + 4 private subnets (1a, 1b)
+## 🚀 Overview
 
-Internet Gateway for public subnets
+This Terraform configuration creates:
 
-NAT Gateway in a public subnet for private egress
+- **1 VPC** – `10.112.0.0/16`
+- **2 Public Subnets** – for Internet-facing resources (AZ 1a, 1b)
+- **4 Private Subnets** – for internal workloads (AZ 1a, 1b)
+- **Internet Gateway** – enables outbound Internet access from public subnets
+- **NAT Gateway** – routes private traffic securely to the Internet
+- **S3 Gateway Endpoint** – private access to Amazon S3
+- Helpful outputs:
+  - `vpc_id`
+  - `public_subnet_ids`
+  - `private_subnet_ids`
+  - `nat_gateway_id`
+  - `s3_endpoint_id`
 
-S3 Gateway VPC Endpoint (private access to S3)
+> ⚠️ **Note:** A NAT Gateway accrues hourly and data processing charges.  
+> Always `terraform destroy` when finished testing.
 
-Helpful outputs: vpc_id, public_subnet_ids, private_subnet_ids, nat_gateway_id, s3_endpoint_id
+---
 
-⚠️ Cost note: A NAT Gateway costs money while running (plus EIP). When you’re done, run terraform destroy.
+## 💡 Purpose
 
-Why this repo
+This repo exists to make **AWS VPC setup repeatable and fast**.
 
-I want a repeatable, “copy-paste-ready” VPC baseline I can:
+You can:
+1. Clone it for a new project.
+2. Search/replace project name and CIDRs.
+3. Run `terraform apply` — done.
 
-Clone into a new folder/repo,
+No more Console clicking. No drift. No re-writing the same boilerplate.
 
-Search/replace the project name and (optionally) CIDRs,
+---
 
-terraform apply and keep moving—no Console clicking, no reverse-engineering.
+## 🧱 Project Structure
 
-What’s inside
+| File | Purpose |
+|------|----------|
+| `vpc.tf` | Defines the VPC and Internet Gateway |
+| `subnets.tf` | Declares public and private subnets |
+| `route.tf` | Configures route tables and associations |
+| `nat.tf` | Creates EIP + NAT Gateway and routes |
+| `endpoint-s3.tf` | Adds S3 Gateway VPC Endpoint |
+| `outputs.tf` | Exports resource IDs for reuse |
+| `.gitignore` | Keeps sensitive/state files out of Git |
+| `terraform.lock.hcl` | Locks provider versions for consistency |
 
-vpc.tf – VPC + IGW + baseline tags
+---
 
-subnets.tf – 2 public + 4 private subnets (a/b)
+## ⚙️ Prerequisites
 
-route.tf – Public and private route tables + associations
+- Terraform ≥ **1.3**
+- AWS CLI configured (`aws sts get-caller-identity`)
+- IAM permissions for VPC, Subnets, RouteTables, NAT/EIP, and Endpoints
 
-nat.tf – Elastic IP + NAT Gateway + private routes through NAT
+---
 
-endpoint-s3.tf – S3 Gateway Endpoint attached to route tables
+## 🏁 Quick Start
 
-outputs.tf – IDs you’ll need for later stacks (EC2, ALB, RDS, etc.)
+```bash
+# Clone this repo
+git clone https://github.com/tawanmaurice/reuseablevpnandnat.git
+cd reuseablevpnandnat
 
-.gitignore – Keeps state, crash logs, tfvars, and editor noise out of Git
+# Initialize Terraform
+terraform init
 
-Variables are intentionally minimal; rename/tag/CIDR edits are simple search/replace to keep this “grab-and-go”.
+# Review before apply
+terraform plan
 
-Prereqs
-
-Terraform ≥ 1.3
-
-AWS CLI configured (aws sts get-caller-identity should work)
-
-IAM permissions for VPC, Subnet, RouteTable, NAT/EIP, and Endpoints
+# Apply changes
+terraform apply
