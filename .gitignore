@@ -1,0 +1,31 @@
+# Local Terraform directories
+.terraform/
+.terraform.tfstate.lock.info
+
+# Terraform state files (never commit secrets/state)
+terraform.tfstate
+terraform.tfstate.*
+*.tfstate
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Sensitive variable files
+*.tfvars
+*.tfvars.json
+terraform.tfvars
+secrets*.tfvars
+
+# Plan files
+*.tfplan
+plan.out
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
